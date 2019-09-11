@@ -4,6 +4,7 @@ use Illuminate\Http\Request;
 use Illuminate\Routing\Controller as BaseController;
 use Barryvdh\TranslationManager\Models\Translation;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\DB;
 use Tanmuhittin\LaravelGoogleTranslate\Commands\TranslateFilesCommand;
 
 class Controller extends BaseController
@@ -32,13 +33,23 @@ class Controller extends BaseController
         $groups = ['' => 'Choose a group'] + $groups;
         $numChanged = Translation::where('group', $group)->where('status', Translation::STATUS_CHANGED)->count();
 
+        $totalNull = Translation::where('group', $group)->whereNull('value')->count();
 
-        $allTranslations = Translation::where('group', $group)->orderBy('key', 'asc')->get();
+
+        $empty = \request()->get('empty');
+        $condition = Translation::where(['group' => $group]);
+        if (!empty($empty)) {
+            $condition = $condition->whereNull('value');
+        }
+        $allTranslations = $condition->orderBy('key', 'asc')->get();
         $numTranslations = count($allTranslations);
         $translations = [];
         foreach ($allTranslations as $translation) {
             $translations[$translation->key][$translation->locale] = $translation;
         }
+
+
+        $static = Translation::select(['locale',DB::raw('COUNT(id) AS total')])->groupBy('locale')->get()->toArray();
 
         return view('translation-manager::index')
             ->with('translations', $translations)
@@ -46,7 +57,9 @@ class Controller extends BaseController
             ->with('groups', $groups)
             ->with('group', $group)
             ->with('numTranslations', $numTranslations)
+            ->with('totalNull', $totalNull)
             ->with('numChanged', $numChanged)
+            ->with('static', $static)
             ->with('editUrl', action('\Barryvdh\TranslationManager\Controller@postEdit', [$group]))
             ->with('deleteEnabled', $this->manager->getConfig('delete_enabled'));
     }
