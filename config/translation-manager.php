@@ -10,9 +10,9 @@ return [
     | The default group settings for the elFinder routes.
     |
     */
-    'route'          => [
-        'prefix'     => 'translations',
-        'middleware' => 'auth',
+    'route' => [
+        'prefix' => 'translations',
+        'middleware' => ['web', 'auth'],
     ],
 
     /**
@@ -20,7 +20,7 @@ return [
      *
      * @type boolean
      */
-    'delete_enabled' => true,
+    'delete_enabled' => false,
 
     /**
      * Exclude specific groups from Laravel Translation Manager.
@@ -46,12 +46,12 @@ return [
      *        'de',
      *    )
      */
-    'exclude_langs'  => [],
+    'exclude_langs' => [],
 
     /**
      * Export translations with keys output alphabetically.
      */
-    'sort_keys '     => false,
+    'sort_keys ' => false,
 
     'trans_functions' => [
         'trans',
@@ -63,7 +63,9 @@ return [
         '@lang',
         '@choice',
         '__',
-        '$trans.get',
+        '\$trans.get',
+        '\$t'//vuejs
     ],
-
+    'file_extension' => ['*.php', '*.vue'],
+    'exclude_folder' => ['storage', 'vendor', 'docker'],
 ];
