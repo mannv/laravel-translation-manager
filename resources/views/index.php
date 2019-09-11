@@ -192,40 +192,6 @@
                 <input type="submit" value="Add keys" class="btn btn-primary">
             </div>
         </form>
-        <div class="row">
-            <div class="col-sm-2">
-                <span class="btn btn-default enable-auto-translate-group">Use Auto Translate</span>
-            </div>
-        </div>
-        <form class="form-add-locale autotranslate-block-group hidden" method="POST" role="form" action="<?php echo action('\Barryvdh\TranslationManager\Controller@postTranslateMissing') ?>">
-            <input type="hidden" name="_token" value="<?php echo csrf_token(); ?>">
-            <div class="row">
-                <div class="col-sm-6">
-                    <div class="form-group">
-                        <label for="base-locale">Base Locale for Auto Translations</label>
-                        <select name="base-locale" id="base-locale" class="form-control">
-                            <?php foreach ($locales as $locale): ?>
-                                <option value="<?= $locale ?>"><?= $locale ?></option>
-                            <?php endforeach; ?>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="new-locale">Enter target locale key</label>
-                        <input type="text" name="new-locale" class="form-control" id="new-locale" placeholder="Enter target locale key" />
-                    </div>
-                    <?php if(!config('laravel_google_translate.google_translate_api_key')): ?>
-                        <p>
-                            <code>Translating using stichoza/google-translate-php. If you would like to use Google Translate API enter your Google Translate API key to config file laravel_google_translate</code>
-                        </p>
-                    <?php endif; ?>
-                    <div class="form-group">
-                        <input type="hidden" name="with-translations" value="1">
-                        <input type="hidden" name="file" value="<?= $group ?>">
-                        <button type="submit" class="btn btn-default btn-block"  data-disable-with="Adding..">Auto translate missing translations</button>
-                    </div>
-                </div>
-            </div>
-        </form>
         <hr>
     <h4>Total: <?= $numTranslations ?>, changed: <?= $numChanged ?></h4>
         <table class="table">
@@ -285,7 +251,7 @@
                                 &times;
                             </button>
                             <?php echo $locale ?>
-                            
+
                         </div>
                     </li>
                 <?php endforeach; ?>

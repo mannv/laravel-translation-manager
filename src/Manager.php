@@ -311,6 +311,11 @@ class Manager
                     $path = $this->app['path.lang'] . '/' . $locale . '.json';
                     $output = json_encode($translations, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_UNICODE);
                     $this->files->put($path, $output);
+
+                    if ($this->config['vuejs_locale_path']) {
+                        $path = base_path() . '/' . $this->config['vuejs_locale_path'] . '/' . $locale . '.json';
+                        $this->files->put($path, $output);
+                    }
                 }
             }
 
