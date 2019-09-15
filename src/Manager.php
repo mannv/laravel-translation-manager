@@ -7,6 +7,7 @@ use Barryvdh\TranslationManager\Models\Translation;
 use Illuminate\Contracts\Events\Dispatcher;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Filesystem\Filesystem;
+use Illuminate\Support\Str;
 use Symfony\Component\Finder\Finder;
 
 class Manager
@@ -187,8 +188,11 @@ class Manager
         $finder = new Finder();
         $finder->in($path)->exclude($this->config['exclude_folder'])->name($this->config['file_extension'])->files();
 
+        $newLinePattern = '[^\w](\$t)\([\n](.*)[\n]';
+
         /** @var \Symfony\Component\Finder\SplFileInfo $file */
         foreach ($finder as $file) {
+//            dump($file->getContents());
             // Search the current file for the pattern
             if (preg_match_all("/$groupPattern/siU", $file->getContents(), $matches)) {
                 // Get all matches
@@ -197,8 +201,26 @@ class Manager
                 }
             }
 
-            if (preg_match_all("/$stringPattern/siU", $file->getContents(), $matches)) {
-                foreach ($matches['string'] as $key) {
+            $matches = [];
+
+            //new line
+            preg_match_all("/$newLinePattern/siU", $file->getContents(), $m1);
+            if(!empty($m1[2])) {
+                foreach ($m1[2] as $item) {
+                    $item = trim($item);
+                    $item = trim($item, '[`,]');
+                    $matches[] = $item;
+                }
+            }
+
+
+            preg_match_all("/$stringPattern/siU", $file->getContents(), $m2);
+            if(!empty($m2['string'])) {
+                $matches = array_merge($matches, $m2['string']);
+            }
+
+            if (!empty($matches)) {
+                foreach ($matches as $key) {
                     if (preg_match("/(^[a-zA-Z0-9_-]+([.][^\1)\ ]+)+$)/siU", $key, $groupMatches)) {
                         // group{.group}.key format, already in $groupKeys but also matched here
                         // do nothing, it has to be treated as a group
@@ -218,7 +240,7 @@ class Manager
         // Remove duplicates
         $groupKeys = array_unique($groupKeys);
         $stringKeys = array_unique($stringKeys);
-
+        
         // Add the translations to the database, if not existing.
         foreach ($groupKeys as $key) {
             // Split the group and item
