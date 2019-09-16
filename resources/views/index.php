@@ -348,9 +348,11 @@
                 var row = $(this).closest('tr');
                 var url = $(this).attr('href');
                 var id = row.attr('id');
-                $.post(url, {id: id}, function () {
-                    row.remove();
-                });
+                if (confirm($(this).data('cf'))) {
+                    $.post(url, {id: id}, function () {
+                        row.remove();
+                    });
+                }
             });
 
             $('.form-import').on('ajax:success', function (e, data) {
@@ -544,9 +546,9 @@
                     <?php if ($deleteEnabled): ?>
                         <td>
                             <a href="<?php echo action('\Barryvdh\TranslationManager\Controller@postDelete',
-                                [$group, $key]) ?>"
+                                ['groupKey' => $group, 'key' => $key]) ?>"
                                class="delete-key"
-                               data-confirm="Are you sure you want to delete the translations for '<?php echo htmlentities($key,
+                               data-cf="Are you sure you want to delete the translations for '<?php echo htmlentities($key,
                                    ENT_QUOTES, 'UTF-8', false) ?>?"><span
                                     class="glyphicon glyphicon-trash"></span></a>
                         </td>
