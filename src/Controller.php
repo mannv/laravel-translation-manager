@@ -42,7 +42,7 @@ class Controller extends BaseController
             $condition = $condition->whereNull('value');
         }
         $allTranslations = $condition->orderBy('key', 'asc')->get();
-        $numTranslations = count($allTranslations);
+        $numTranslations = $allTranslations->where('locale', 'en')->count();
         $translations = [];
         foreach ($allTranslations as $translation) {
             $translations[$translation->key][$translation->locale] = $translation;
