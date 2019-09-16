@@ -37,7 +37,7 @@ class Controller extends BaseController
 
 
         $empty = \request()->get('empty');
-        $condition = Translation::where(['group' => $group, 'locale' => 'en']);
+        $condition = Translation::where(['group' => $group]);
         if (!empty($empty)) {
             $condition = $condition->whereNull('value');
         }
@@ -57,7 +57,7 @@ class Controller extends BaseController
             $staticEmpty = Translation::select([
                 'locale',
                 DB::raw('COUNT(id) AS total')
-            ])->whereNull('value')->groupBy('locale')->get()->toArray();
+            ])->whereNotNull('value')->groupBy('locale')->get()->toArray();
 
 
             $emptyData = [];
@@ -70,7 +70,7 @@ class Controller extends BaseController
             foreach ($static as $item) {
                 $staticData[$item['locale']] = [
                     'total' => $item['total'],
-                    'empty' => $emptyData[$item['locale']] ?? $item['total'],
+                    'empty' => $emptyData[$item['locale']] ?? 0,
                 ];
             }
         }
