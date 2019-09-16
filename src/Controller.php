@@ -37,7 +37,7 @@ class Controller extends BaseController
 
 
         $empty = \request()->get('empty');
-        $condition = Translation::where(['group' => $group]);
+        $condition = Translation::where(['group' => $group, 'locale' => 'en']);
         if (!empty($empty)) {
             $condition = $condition->whereNull('value');
         }
@@ -50,7 +50,7 @@ class Controller extends BaseController
 
 
         $static = Translation::select(['locale',DB::raw('COUNT(id) AS total')])->groupBy('locale')->get()->toArray();
-
+        $staticEmpty = Translation::select(['locale',DB::raw('COUNT(id) AS total')])->whereNull('value')->groupBy('locale')->get()->toArray();
         return view('translation-manager::index')
             ->with('translations', $translations)
             ->with('locales', $locales)
@@ -60,6 +60,7 @@ class Controller extends BaseController
             ->with('totalNull', $totalNull)
             ->with('numChanged', $numChanged)
             ->with('static', $static)
+            ->with('staticEmpty', $staticEmpty)
             ->with('editUrl', action('\Barryvdh\TranslationManager\Controller@postEdit', [$group]))
             ->with('deleteEnabled', $this->manager->getConfig('delete_enabled'));
     }

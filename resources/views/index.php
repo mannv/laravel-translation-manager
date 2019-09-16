@@ -499,10 +499,12 @@
             <div class="col-md-6 text-right">
                 <ul class="list-unstyled list-inline">
                     <?php
-                    foreach ($static as $item) {
+                    foreach ($static as $index => $item) {
+                        $empty = $item['total'] - $staticEmpty[$index]['total'];
                         ?>
-                        <li><strong style="text-transform: uppercase"><?php echo $item['locale'] ?></strong>: <strong
-                                class="text-danger"><?php echo $item['total'] ?></strong></li>
+                        <li><strong style="text-transform: uppercase"><?php echo $item['locale'] ?></strong>:
+                            <strong title="đã dịch" class="text-success"><?php echo $empty ?></strong>/<strong title="tổng số"><?php echo $item['total'] ?></strong>
+                        </li>
                         <?php
                     }
                     ?>
