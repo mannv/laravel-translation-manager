@@ -49,8 +49,32 @@ class Controller extends BaseController
         }
 
 
-        $static = Translation::select(['locale',DB::raw('COUNT(id) AS total')])->groupBy('locale')->get()->toArray();
-        $staticEmpty = Translation::select(['locale',DB::raw('COUNT(id) AS total')])->whereNull('value')->groupBy('locale')->get()->toArray();
+        $static = Translation::select(['locale', DB::raw('COUNT(id) AS total')])->groupBy('locale')->get()->toArray();
+
+
+        $staticData = [];
+        if (!empty($static)) {
+            $staticEmpty = Translation::select([
+                'locale',
+                DB::raw('COUNT(id) AS total')
+            ])->whereNull('value')->groupBy('locale')->get()->toArray();
+
+
+            $emptyData = [];
+            if (!empty($staticEmpty)) {
+                foreach ($staticEmpty as $item) {
+                    $emptyData[$item['locale']] = $item['total'];
+                }
+            }
+
+            foreach ($static as $item) {
+                $staticData[$item['locale']] = [
+                    'total' => $item['total'],
+                    'empty' => $emptyData[$item['locale']] ?? $item['total'],
+                ];
+            }
+        }
+
         return view('translation-manager::index')
             ->with('translations', $translations)
             ->with('locales', $locales)
@@ -59,8 +83,7 @@ class Controller extends BaseController
             ->with('numTranslations', $numTranslations)
             ->with('totalNull', $totalNull)
             ->with('numChanged', $numChanged)
-            ->with('static', $static)
-            ->with('staticEmpty', $staticEmpty)
+            ->with('static', $staticData)
             ->with('editUrl', action('\Barryvdh\TranslationManager\Controller@postEdit', [$group]))
             ->with('deleteEnabled', $this->manager->getConfig('delete_enabled'));
     }
