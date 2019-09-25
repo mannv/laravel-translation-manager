@@ -253,7 +253,7 @@ class Manager
 
         foreach ($stringKeys as $key) {
             $group = self::JSON_GROUP;
-            $item = $key;
+            $item = trim($key);
             $this->missingKey('', $group, $item);
         }
 
@@ -267,6 +267,28 @@ class Manager
         if (empty($allKeys)) {
             return;
         }
+
+
+        $nuxt = config('nuxt');
+        $configKeys = [
+            'gender',
+            'feature_company',
+            'feature_environment',
+            'business_content_1',
+            'business_content_2',
+            'member_scale',
+            'education_rank',
+            'interview_type',
+            'job_change_hope_time',
+            'money_unit',
+            'job_level_list',
+            'type_deal_salary',
+            'job_experience'
+        ];
+        foreach ($configKeys as $key) {
+            $foundKeys = array_merge($foundKeys, $nuxt[$key]);
+        }
+
 
         Translation::where(['locale' => 'en'])->update(['no_use' => false]);
 
