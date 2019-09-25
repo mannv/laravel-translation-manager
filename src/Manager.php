@@ -188,10 +188,10 @@ class Manager
         $finder = new Finder();
         $finder->in($path)->exclude($this->config['exclude_folder'])->name($this->config['file_extension'])->files();
 
-        $newLinePattern = '[^\w](\$t)\([\n](.*)[\n]';
-
+        $newLinePattern = '[^\w](' . implode('|', $functions) . ')\([\n](.*)[\n]';
         /** @var \Symfony\Component\Finder\SplFileInfo $file */
         foreach ($finder as $file) {
+//            dd($file);
 //            dump($file->getContents());
             // Search the current file for the pattern
             if (preg_match_all("/$groupPattern/siU", $file->getContents(), $matches)) {
@@ -202,22 +202,22 @@ class Manager
             }
 
             $matches = [];
-
             //new line
             preg_match_all("/$newLinePattern/siU", $file->getContents(), $m1);
+
             if (!empty($m1[2])) {
                 foreach ($m1[2] as $item) {
                     $item = trim($item);
-                    $item = trim($item, '[`,]');
+                    $item = trim($item, '`,\'');
                     $matches[] = $item;
                 }
             }
-
 
             preg_match_all("/$stringPattern/siU", $file->getContents(), $m2);
             if (!empty($m2['string'])) {
                 $matches = array_merge($matches, $m2['string']);
             }
+
 
             if (!empty($matches)) {
                 foreach ($matches as $key) {
