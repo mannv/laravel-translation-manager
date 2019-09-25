@@ -1,6 +1,6 @@
 ## Laravel 5 Translation Manager
 
-### For Laravel 4, please use the [0.1 branch](https://github.com/barryvdh/laravel-translation-manager/tree/0.1)!
+### For Laravel 4, please use the [0.1 branch](https://github.com/plum/laravel-translation-manager/tree/0.1)!
 
 This is a package to manage Laravel translation files.
 It does not replace the Translation system, only import/export the php files to a database and make them editable through a webinterface.
@@ -18,9 +18,9 @@ This way, translations can be saved in git history and no overhead is introduced
 
 ## Installation
 
-Require this package in your composer.json and run composer update (or run `composer require barryvdh/laravel-translation-manager` directly):
+Require this package in your composer.json and run composer update (or run `composer require plum/laravel-translation-manager` directly):
 
-    composer require barryvdh/laravel-translation-manager
+    composer require plum/laravel-translation-manager
 
 After updating composer, add the ServiceProvider to the providers array in `config/app.php`
 
