@@ -37,9 +37,14 @@ class Controller extends BaseController
 
 
         $empty = \request()->get('empty');
+        $no_use = \request()->get('no_use');
+
         $condition = Translation::where(['group' => $group]);
         if (!empty($empty)) {
             $condition = $condition->whereNull('value');
+        }
+        if ($no_use == 1) {
+            $condition = $condition->where(['no_use' => 1]);
         }
         $allTranslations = $condition->orderBy('key', 'asc')->get();
         $numTranslations = $allTranslations->where('locale', 'en')->count();
@@ -75,11 +80,15 @@ class Controller extends BaseController
             }
         }
 
+        //thong ke nhung key khong dung nua
+        $totalNoUse = Translation::where(['locale' => 'en', 'no_use' => true])->count();
+
         return view('translation-manager::index')
             ->with('translations', $translations)
             ->with('locales', $locales)
             ->with('groups', $groups)
             ->with('group', $group)
+            ->with('totalNoUse', $totalNoUse)
             ->with('numTranslations', $numTranslations)
             ->with('totalNull', $totalNull)
             ->with('numChanged', $numChanged)

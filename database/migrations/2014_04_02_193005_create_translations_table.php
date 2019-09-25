@@ -20,6 +20,7 @@ class CreateTranslationsTable extends Migration
             $table->string('group');
             $table->text('key');
             $table->text('value')->nullable();
+            $table->boolean('no_use')->default(false);
             $table->timestamps();
         });
     }

@@ -205,7 +205,7 @@ class Manager
 
             //new line
             preg_match_all("/$newLinePattern/siU", $file->getContents(), $m1);
-            if(!empty($m1[2])) {
+            if (!empty($m1[2])) {
                 foreach ($m1[2] as $item) {
                     $item = trim($item);
                     $item = trim($item, '[`,]');
@@ -215,7 +215,7 @@ class Manager
 
 
             preg_match_all("/$stringPattern/siU", $file->getContents(), $m2);
-            if(!empty($m2['string'])) {
+            if (!empty($m2['string'])) {
                 $matches = array_merge($matches, $m2['string']);
             }
 
@@ -240,13 +240,16 @@ class Manager
         // Remove duplicates
         $groupKeys = array_unique($groupKeys);
         $stringKeys = array_unique($stringKeys);
-        
+        $stringKeys = array_values($stringKeys);
+
         // Add the translations to the database, if not existing.
         foreach ($groupKeys as $key) {
             // Split the group and item
             list($group, $item) = explode('.', $key, 2);
             $this->missingKey('', $group, $item);
         }
+
+        $this->updateKeyNoUse($stringKeys);
 
         foreach ($stringKeys as $key) {
             $group = self::JSON_GROUP;
@@ -256,6 +259,24 @@ class Manager
 
         // Return the number of found translations
         return count($groupKeys + $stringKeys);
+    }
+
+    private function updateKeyNoUse($foundKeys)
+    {
+        $allKeys = Translation::where(['locale' => 'en'])->pluck('key')->all();
+        if (empty($allKeys)) {
+            return;
+        }
+
+        Translation::where(['locale' => 'en'])->update(['no_use' => false]);
+
+        $noUseKey = [];
+        foreach ($allKeys as $key) {
+            if (!in_array($key, $foundKeys)) {
+                $noUseKey[] = $key;
+                Translation::where(['locale' => 'en', 'key' => $key])->update(['no_use' => true]);
+            }
+        }
     }
 
     public function missingKey($namespace, $group, $key)
