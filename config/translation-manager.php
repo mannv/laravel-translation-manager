@@ -68,5 +68,6 @@ return [
     ],
     'file_extension' => ['*.php', '*.vue'],
     'exclude_folder' => ['storage', 'vendor', 'docker'],
-    'vuejs_locale_path' => null
+    'vuejs_locale_path' => null,
+    'publish_callback' => []
 ];

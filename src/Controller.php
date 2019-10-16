@@ -191,6 +191,15 @@ class Controller extends BaseController
 
         $this->manager->exportTranslations($group, $json);
 
+        $callback = config('translation-manager.publish_callback');
+        if (empty($callback)) {
+            return;
+        }
+        
+        foreach ($callback as $command) {
+            \Artisan::call($command);
+        }
+
         return ['status' => 'ok'];
     }
 
