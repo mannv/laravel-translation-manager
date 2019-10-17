@@ -189,8 +189,22 @@ class Manager
         $finder->in($path)->exclude($this->config['exclude_folder'])->name($this->config['file_extension'])->files();
 
         $newLinePattern = '[^\w](' . implode('|', $functions) . ')\([\n](.*)[\n]';
+        $excludeExtension = $this->config['exclude_extension'];
+
         /** @var \Symfony\Component\Finder\SplFileInfo $file */
         foreach ($finder as $file) {
+            if (!empty($excludeExtension)) {
+                $continute = false;
+                foreach ($excludeExtension as $ext) {
+                    if (Str::endsWith($file->getBasename(), $ext)) {
+                        $continute = true;
+                        break;
+                    }
+                }
+                if ($continute) {
+                    continue;
+                }
+            }
 //            dd($file);
 //            dump($file->getContents());
             // Search the current file for the pattern

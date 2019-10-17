@@ -1,5 +1,10 @@
 <?php
 
+$callBack = [];
+if (config('app.env') != 'local') {
+    $callBack = ['translations:git'];
+}
+
 return [
 
     /*
@@ -11,7 +16,7 @@ return [
     |
     */
     'route' => [
-        'prefix' => 'translations',
+        'prefix' => 'backend/translations',
         'middleware' => ['web', 'auth'],
     ],
 
@@ -20,7 +25,7 @@ return [
      *
      * @type boolean
      */
-    'delete_enabled' => false,
+    'delete_enabled' => true,
 
     /**
      * Exclude specific groups from Laravel Translation Manager.
@@ -66,8 +71,9 @@ return [
         '\$trans.get',
         '\$t'//vuejs
     ],
-    'file_extension' => ['*.php', '*.vue'],
-    'exclude_folder' => ['storage', 'vendor', 'docker'],
-    'vuejs_locale_path' => null,
-    'publish_callback' => []
+    'file_extension' => ['*.php', '*.vue', '*.js'],
+    'exclude_extension' => ['blade.php'],
+    'exclude_folder' => ['storage', 'vendor', 'docker', 'Nuxtjs/node_modules'],
+    'vuejs_locale_path' => 'Nuxtjs/locales',
+    'publish_callback' => $callBack
 ];
