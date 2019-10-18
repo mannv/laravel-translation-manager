@@ -383,10 +383,11 @@ class Manager
             $tree = $this->makeTree(Translation::ofTranslatedGroup(self::JSON_GROUP)
                 ->orderByGroupKeys(array_get($this->config, 'sort_keys', false))
                 ->get(), true);
-
             foreach ($tree as $locale => $groups) {
                 if (isset($groups[self::JSON_GROUP])) {
                     $translations = $groups[self::JSON_GROUP];
+                    $translations = $this->lowerKey($translations);
+
                     $path = $this->app['path.lang'] . '/' . $locale . '.json';
                     $output = json_encode($translations, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_UNICODE);
                     $this->files->put($path, $output);
@@ -402,6 +403,10 @@ class Manager
         }
 
         $this->events->dispatch(new TranslationsExportedEvent());
+    }
+
+    private function lowerKey($translations) {
+        return array_change_key_case($translations, CASE_LOWER);
     }
 
     public function exportAllTranslations()
