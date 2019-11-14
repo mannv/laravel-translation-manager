@@ -262,7 +262,7 @@ class Manager
             list($group, $item) = explode('.', $key, 2);
             $this->missingKey('', $group, $item);
         }
-
+        $this->getCustomKey($stringKeys);
         $this->updateKeyNoUse($stringKeys);
 
         foreach ($stringKeys as $key) {
@@ -275,14 +275,7 @@ class Manager
         return count($groupKeys + $stringKeys);
     }
 
-    private function updateKeyNoUse($foundKeys)
-    {
-        $allKeys = Translation::where(['locale' => 'en'])->pluck('key')->all();
-        if (empty($allKeys)) {
-            return;
-        }
-
-
+    private function getCustomKey(&$foundKeys) {
         $nuxt = config('nuxt');
         $configKeys = [
             'gender',
@@ -302,7 +295,16 @@ class Manager
         foreach ($configKeys as $key) {
             $foundKeys = array_merge($foundKeys, $nuxt[$key]);
         }
+        $foundKeys = array_unique($foundKeys);
+        $foundKeys = array_values($foundKeys);
+    }
 
+    private function updateKeyNoUse($foundKeys)
+    {
+        $allKeys = Translation::where(['locale' => 'en'])->pluck('key')->all();
+        if (empty($allKeys)) {
+            return;
+        }
 
         Translation::where(['locale' => 'en'])->update(['no_use' => false]);
 
