@@ -275,7 +275,8 @@ class Manager
         return count($groupKeys + $stringKeys);
     }
 
-    private function getCustomKey(&$foundKeys) {
+    private function getCustomKey(&$foundKeys)
+    {
         $nuxt = config('nuxt');
         $configKeys = [
             'gender',
@@ -295,6 +296,9 @@ class Manager
         foreach ($configKeys as $key) {
             $foundKeys = array_merge($foundKeys, $nuxt[$key]);
         }
+
+        $foundKeys = array_merge($foundKeys, $this->config['custom_keys']);
+
         $foundKeys = array_unique($foundKeys);
         $foundKeys = array_values($foundKeys);
     }
@@ -407,7 +411,8 @@ class Manager
         $this->events->dispatch(new TranslationsExportedEvent());
     }
 
-    private function lowerKey($translations) {
+    private function lowerKey($translations)
+    {
         return array_change_key_case($translations, CASE_LOWER);
     }
 
