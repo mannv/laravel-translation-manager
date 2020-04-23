@@ -504,12 +504,12 @@
                     <li>Tổng: <strong class="text-success"><?= $numTranslations ?></strong></li>
                     <li>Thay đổi: <strong class="text-info"><?= $numChanged ?></strong></li>
                     <li>
-                        <a href="/backend/translations/view/_json?empty=1">Chưa dịch</a>: <strong
+                        <a href="/translations/view/_json?empty=1">Chưa dịch</a>: <strong
                             class="text-info"><?php echo $totalNull ?></strong>
                     </li>
 
                     <li class="no-use">
-                        <a href="/backend/translations/view/_json?no_use=1">Không dùng nữa: <strong><?= $totalNoUse ?></strong></a>
+                        <a href="/translations/view/_json?no_use=1">Không dùng nữa: <strong><?= $totalNoUse ?></strong></a>
                     </li>
                 </ul>
             </div>
