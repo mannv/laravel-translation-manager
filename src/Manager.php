@@ -398,9 +398,11 @@ class Manager
                     $output = json_encode($translations, \JSON_PRETTY_PRINT | \JSON_UNESCAPED_UNICODE);
                     $this->files->put($path, $output);
 
-                    if ($this->config['vuejs_locale_path']) {
-                        $path = base_path() . '/' . $this->config['vuejs_locale_path'] . '/' . $locale . '.json';
-                        $this->files->put($path, $output);
+                    if (!empty($this->config['vuejs_locale_path'])) {
+                        foreach ($this->config['vuejs_locale_path'] as $p) {
+                            $path = base_path() . '/' . $p . '/' . $locale . '.json';
+                            $this->files->put($path, $output);
+                        }
                     }
                 }
             }
